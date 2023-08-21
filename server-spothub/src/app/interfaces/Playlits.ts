@@ -4,4 +4,5 @@ export type Playlist = {
   id: string;
   image: string;
   order: number;
+  href: string;
 };

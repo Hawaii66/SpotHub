@@ -1,3 +1,4 @@
+import { clientID } from "@/utils/spotify";
 import { NextRequest, NextResponse } from "next/server";
 
 const generateRandomString = function (length: number) {
@@ -10,8 +11,6 @@ const generateRandomString = function (length: number) {
   }
   return text;
 };
-
-export const clientID = "5396f8708c2846f7abbe60a4c143f976";
 
 export async function GET(req: NextRequest) {
   const state = generateRandomString(16);

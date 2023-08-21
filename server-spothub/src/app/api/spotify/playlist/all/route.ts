@@ -1,5 +1,7 @@
+import { query } from "@/utils/database";
 import { GetPlayState } from "@/utils/spotify";
 import { GetToken } from "@/utils/token";
+import { connect } from "@planetscale/database";
 import { NextResponse } from "next/server";
 
 export const GET = async (request: Request) => {
@@ -30,6 +32,9 @@ export const GET = async (request: Request) => {
       break;
     }
   }
+
+  const test = await query("SELECT * FROM playlists");
+  console.log(test);
 
   return NextResponse.json({
     playlists: playlists.map((i, idx) => ({

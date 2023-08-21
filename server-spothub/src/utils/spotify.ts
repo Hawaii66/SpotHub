@@ -23,3 +23,5 @@ export const GetPlayState = async (token: string) => {
 
   return state as SpotifyPlayState;
 };
+
+export const clientID = "5396f8708c2846f7abbe60a4c143f976";

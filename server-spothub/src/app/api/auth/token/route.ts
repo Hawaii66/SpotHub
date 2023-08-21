@@ -1,5 +1,5 @@
+import { clientID } from "@/utils/spotify";
 import { NextResponse } from "next/server";
-import { clientID } from "../route";
 
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
