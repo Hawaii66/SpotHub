@@ -9,15 +9,31 @@ CREATE TABLE IF NOT EXISTS playlists (
 CREATE TABLE IF NOT EXISTS folders (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name TEXT,
-    description TEXT
+    description TEXT,
+    user_id VARCHAR(250)
 );
 
-CREATE TABLE IF NOT EXISTS foldered_playlist (
+CREATE TABLE IF NOT EXISTS users (
+    id VARCHAR(250) PRIMARY KEY,
+    name TEXT,
+    href TEXT,
+    email TEXT
+);
+
+CREATE TABLE IF NOT EXISTS foldered_playlists (
     id INT PRIMARY KEY AUTO_INCREMENT,
     playlist_id VARCHAR(250),
     folder_id INT
 );
 
-DELETE FROM playlists
-DELETE FROM folders
-DELETE FROM foldered_playlist
+CREATE TABLE IF NOT EXISTS user_folders (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	user_id VARCHAR(250),
+	folder_id INT
+);
+
+DELETE FROM playlists;
+DELETE FROM folders;
+DELETE FROM foldered_playlists;
+DELETE FROM users;
+DELETE FROM user_folders;

@@ -3,18 +3,34 @@
 import { useToken } from "@/hooks/useToken";
 import { apiFetch } from "@/utils/apiFetch";
 import React, { useEffect, useState } from "react";
-import { Playlist } from "../interfaces/Playlits";
-import Playlits from "../components/Playlits";
+import Playlits from "../../components/Playlits";
+import { Playlist } from "@/interfaces/Playlits";
+import { User } from "@/interfaces/User";
+import Link from "next/link";
 
 function page() {
   useToken();
 
   const [result, setResult] = useState("");
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [user, setUser] = useState<User | null>(null);
 
   const test = async () => {
-    const result = await apiFetch("GET", "/api/spotify");
-    console.log(await result.json());
+    await apiFetch("GET", "/api/spotify");
+
+    const result = await apiFetch("GET", "/api/user");
+    const user = await result.json();
+    setUser(user);
+  };
+
+  const newFolder = async (name: string, description: string) => {
+    const result = await apiFetch("POST", "/api/folder", {
+      name,
+      description,
+    });
+    const folder = await result.json();
+    if (user === null) return;
+    setUser({ ...user, folders: [...user.folders, folder] });
   };
 
   const play = async () => {
@@ -64,12 +80,36 @@ function page() {
         <button onClick={all}>All playlists</button>
       </div>
       <h1>Result</h1>
+      {user && (
+        <>
+          <div>
+            <h1>{user.name}</h1>
+            <h3>{user.email}</h3>
+            <Link href={user.href}>Visit</Link>
+          </div>
+          <div>
+            <button
+              onClick={() => {
+                const name = prompt("Name");
+                const desc = prompt("Desc");
+                newFolder(name || "", desc || "");
+              }}
+            >
+              New Folder
+            </button>
+            {user.folders.map((folder) => (
+              <div>
+                <h1>{folder.name}</h1>
+                <h2>{folder.description}</h2>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
       <div className="grid grid-cols-4 gap-4 mx-12 my-4 w-screen">
-        {playlists
-          .sort((a, b) => a.order - b.order)
-          .map((playlist) => (
-            <Playlits playlist={playlist} />
-          ))}
+        {playlists.map((playlist) => (
+          <Playlits playlist={playlist} />
+        ))}
       </div>
       <p style={{ maxWidth: "90vw" }} className="text-clip">
         {JSON.stringify(result)}

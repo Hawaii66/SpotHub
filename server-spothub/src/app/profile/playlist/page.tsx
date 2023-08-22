@@ -1,6 +1,6 @@
 "use client";
 
-import { Playlist } from "@/app/interfaces/Playlits";
+import { Playlist } from "@/interfaces/Playlits";
 import { apiFetch } from "@/utils/apiFetch";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";

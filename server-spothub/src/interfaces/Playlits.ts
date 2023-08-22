@@ -3,6 +3,5 @@ export type Playlist = {
   description: string;
   id: string;
   image: string;
-  order: number;
   href: string;
 };
