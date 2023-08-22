@@ -3,10 +3,12 @@
 import { useToken } from "@/hooks/useToken";
 import { apiFetch } from "@/utils/apiFetch";
 import React, { useEffect, useState } from "react";
-import Playlits from "../../components/Playlits";
+import PlaylistCard from "../../components/PlaylistCard";
 import { Playlist } from "@/interfaces/Playlits";
 import { User } from "@/interfaces/User";
 import Link from "next/link";
+import FolderCard from "@/components/FolderCard";
+import ChooseFolder from "@/components/ChooseFolder";
 
 function page() {
   useToken();
@@ -14,6 +16,7 @@ function page() {
   const [result, setResult] = useState("");
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [changeFolder, setChangeFolder] = useState<Playlist | null>(null);
 
   const test = async () => {
     await apiFetch("GET", "/api/spotify");
@@ -64,7 +67,7 @@ function page() {
   }, []);
 
   return (
-    <div className="w-screen">
+    <div className="w-full">
       <div
         style={{
           width: "20vw",
@@ -106,14 +109,29 @@ function page() {
           </div>
         </>
       )}
-      <div className="grid grid-cols-4 gap-4 mx-12 my-4 w-screen">
+      <div className="grid grid-cols-5 gap-8 my-4 w-full px-12">
+        {user && user.folders.map((folder) => <FolderCard folder={folder} />)}
+      </div>
+      <div className="grid grid-cols-5 gap-8 my-4 w-full px-12">
         {playlists.map((playlist) => (
-          <Playlits playlist={playlist} />
+          <PlaylistCard
+            onAddToFolder={() => setChangeFolder(playlist)}
+            playlist={playlist}
+          />
         ))}
       </div>
-      <p style={{ maxWidth: "90vw" }} className="text-clip">
-        {JSON.stringify(result)}
-      </p>
+
+      {user && changeFolder && (
+        <ChooseFolder
+          onChoose={() => {
+            setChangeFolder(null);
+          }}
+          folders={user.folders}
+          onClose={() => {
+            setChangeFolder(null);
+          }}
+        />
+      )}
     </div>
   );
 }
