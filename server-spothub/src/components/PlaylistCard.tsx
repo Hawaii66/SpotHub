@@ -6,7 +6,7 @@ import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import Link from "next/link";
 
 interface Props {
-  onAddToFolder: () => void;
+  onAddToFolder?: () => void;
   playlist: Playlist;
 }
 
@@ -34,9 +34,11 @@ function PlaylistCard({ playlist, onAddToFolder }: Props) {
             >
               <PlayArrowIcon color={"success"} fontSize="large" />
             </Link>
-            <button onClick={onAddToFolder} className="aspect-square">
-              <FolderOpenIcon color={"success"} fontSize="large" />
-            </button>
+            {onAddToFolder && (
+              <button onClick={onAddToFolder} className="aspect-square">
+                <FolderOpenIcon color={"success"} fontSize="large" />
+              </button>
+            )}
             <Link
               passHref
               href={playlist.href}
