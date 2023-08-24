@@ -32,6 +32,15 @@ function page() {
     setFolder(matches);
   };
 
+  const deleteFromFolder = async (playlistId: string) => {
+    const result = await apiFetch(
+      "DELETE",
+      `/api/folder?playlist_id=${playlistId}&folder_id=${folder?.id}`
+    );
+    const updatedFolder = await result.json();
+    setFolder(updatedFolder);
+  };
+
   useEffect(() => {
     test();
   }, []);
@@ -46,7 +55,10 @@ function page() {
       <p>{folder.description}</p>
       <div className="grid grid-cols-5 gap-8 my-4 w-full px-12">
         {folder.playlists.map((playlist) => (
-          <PlaylistCard playlist={playlist} />
+          <PlaylistCard
+            onDeleteFromFolder={() => deleteFromFolder(playlist.id)}
+            playlist={playlist}
+          />
         ))}
       </div>
     </div>

@@ -3,14 +3,16 @@ import { Playlist } from "../interfaces/Playlits";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 
 interface Props {
   onAddToFolder?: () => void;
+  onDeleteFromFolder?: () => void;
   playlist: Playlist;
 }
 
-function PlaylistCard({ playlist, onAddToFolder }: Props) {
+function PlaylistCard({ playlist, onAddToFolder, onDeleteFromFolder }: Props) {
   return (
     <div className="shadow-2xl pb-4 rounded-2xl">
       <div className="aspect-square rounded-2xl w-full">
@@ -37,6 +39,11 @@ function PlaylistCard({ playlist, onAddToFolder }: Props) {
             {onAddToFolder && (
               <button onClick={onAddToFolder} className="aspect-square">
                 <FolderOpenIcon color={"success"} fontSize="large" />
+              </button>
+            )}
+            {onDeleteFromFolder && (
+              <button onClick={onDeleteFromFolder} className="aspect-square">
+                <DeleteIcon color={"success"} fontSize="large" />
               </button>
             )}
             <Link
