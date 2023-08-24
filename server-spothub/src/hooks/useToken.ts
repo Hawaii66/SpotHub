@@ -33,7 +33,6 @@ export const useToken = () => {
     const result = await fetch(`/api/auth/token?clientId=${clientId}`);
     const token = (await result.json()).token;
     localStorage.setItem("spotify-token", token);
-    console.log(token);
     setToken(token);
   };
 

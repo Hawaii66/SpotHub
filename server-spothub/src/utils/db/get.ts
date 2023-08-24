@@ -10,7 +10,10 @@ import {
   DBUserFolders,
 } from "@/interfaces/Database";
 
-export const GetUser = async (userid: string): Promise<User | undefined> => {
+export const GetUser = async (
+  userid: string,
+  token: string
+): Promise<User | undefined> => {
   const db = new DatabaseFactory().GetDB();
   const result = await db.query<DBUser>("SELECT * FROM users WHERE id=?", [
     userid,
@@ -21,9 +24,7 @@ export const GetUser = async (userid: string): Promise<User | undefined> => {
 
   const user = result.rows[0];
 
-  const folders = await GetFolders(userid);
-
-  console.log(folders, userid);
+  const folders = await GetFolders(userid, token);
 
   return {
     ...user,
@@ -44,11 +45,14 @@ export const GetUserFromToken = async (
   const json = await spotifyUser.json();
 
   const id = json.id;
-  const user = await GetUser(id);
+  const user = await GetUser(id, token);
   return user;
 };
 
-export const GetFolders = async (userid: string): Promise<Folder[]> => {
+export const GetFolders = async (
+  userid: string,
+  token: string
+): Promise<Folder[]> => {
   const db = new DatabaseFactory().GetDB();
   const result = await db.query<DBFolder>(
     "SELECT * FROM folders WHERE user_id=?",
@@ -56,11 +60,14 @@ export const GetFolders = async (userid: string): Promise<Folder[]> => {
   );
 
   const foldersPromises: Promise<Folder>[] = [];
-  result.rows.forEach((row) => foldersPromises.push(GetFolder(row.id)));
+  result.rows.forEach((row) => foldersPromises.push(GetFolder(row.id, token)));
   return Promise.all(foldersPromises);
 };
 
-export const GetFolder = async (folderid: number): Promise<Folder> => {
+export const GetFolder = async (
+  folderid: number,
+  token: string
+): Promise<Folder> => {
   const db = new DatabaseFactory().GetDB();
   const result = await db.query<DBFolder>("SELECT * FROM folders WHERE id=?", [
     folderid,
@@ -73,7 +80,7 @@ export const GetFolder = async (folderid: number): Promise<Folder> => {
 
   const playlistPromises: Promise<Playlist>[] = [];
   playlistsInFolder.rows.forEach((foldered) =>
-    playlistPromises.push(GetPlaylist(foldered.playlist_id))
+    playlistPromises.push(GetPlaylist(foldered.playlist_id, token))
   );
   const playlists = await Promise.all(playlistPromises);
 
@@ -83,13 +90,27 @@ export const GetFolder = async (folderid: number): Promise<Folder> => {
   };
 };
 
-export const GetPlaylist = async (playlistid: string): Promise<Playlist> => {
-  const db = new DatabaseFactory().GetDB();
-  const result = await db.query<DBPlaylist>(
-    "SELECT * FROM playlists WHERE id=?",
-    [playlistid]
+export const GetPlaylist = async (
+  playlistid: string,
+  token: string
+): Promise<Playlist> => {
+  const result = await fetch(
+    `https://api.spotify.com/v1/playlists/${playlistid}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
-  const playlist = result.rows[0];
 
-  return playlist;
+  const data = await result.json();
+
+  return {
+    description: data.description,
+    href: data.external_urls.spotify,
+    id: data.id,
+    image: data.images && data.images.length > 0 ? data.images[0].url : "",
+    name: data.name,
+  };
 };

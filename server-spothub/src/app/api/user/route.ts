@@ -16,19 +16,20 @@ export const GET = async (request: Request) => {
   const json = await spotifyUser.json();
 
   const id = json.id;
-  var user = await GetUser(id);
+  var user = await GetUser(id, token || "");
   if (user === undefined) {
-    user = await CreateUser({
-      email: json.email,
-      href: json.href,
-      id: json.id,
-      name: json.display_name,
-    });
+    user = await CreateUser(
+      {
+        email: json.email,
+        href: json.href,
+        id: json.id,
+        name: json.display_name,
+      },
+      token || ""
+    );
   } else {
-    console.log("User already exists");
+    console.error("User already exists");
   }
-
-  console.log(user);
 
   return NextResponse.json(user);
 };

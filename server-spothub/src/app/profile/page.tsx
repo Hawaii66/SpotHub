@@ -54,6 +54,26 @@ function page() {
     setResult(await result.json());
   };
 
+  const addPlaylistToFolder = async (folderId: number) => {
+    if (changeFolder === null) return;
+
+    const result = await apiFetch(
+      "POST",
+      `/api/folder/playlist?folder=${folderId}&playlist=${changeFolder.id}`
+    );
+
+    const newFolder = await result.json();
+
+    if (user === null) {
+      return;
+    }
+
+    setUser({
+      ...user,
+      folders: [...user.folders.filter((f) => f.id !== folderId), newFolder],
+    });
+  };
+
   const all = async () => {
     setResult("Loading");
     const result = await apiFetch("GET", "/api/spotify/playlist/all");
@@ -123,8 +143,9 @@ function page() {
 
       {user && changeFolder && (
         <ChooseFolder
-          onChoose={() => {
+          onChoose={(folder) => {
             setChangeFolder(null);
+            addPlaylistToFolder(folder.id);
           }}
           folders={user.folders}
           onClose={() => {

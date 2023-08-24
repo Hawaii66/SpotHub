@@ -4,8 +4,6 @@ import { NextResponse } from "next/server";
 export const GET = async (request: Request) => {
   const token = GetToken(request);
 
-  console.log(token);
-
   const result = await fetch("https://api.spotify.com/v1/me", {
     method: "GET",
     headers: {

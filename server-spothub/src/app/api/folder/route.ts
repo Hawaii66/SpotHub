@@ -11,12 +11,15 @@ export const POST = async (request: Request) => {
 
   const { name, description } = await request.json();
 
-  const folder = await CreateFolder({
-    description,
-    name,
-    user_id: user.id,
-    id: -1,
-  });
+  const folder = await CreateFolder(
+    {
+      description,
+      name,
+      user_id: user.id,
+      id: -1,
+    },
+    token
+  );
 
   return NextResponse.json(folder);
 };
